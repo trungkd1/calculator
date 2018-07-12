@@ -21,11 +21,11 @@ import java.util.regex.Pattern;
 
 public class CalculatorView extends LinearLayout{
 
-    private TextView mtxtResult;
-    private TextView mtxtFomula;
+    public TextView mtxtResult;
+    public TextView mtxtFomula;
 
-    private Set<String> numbers;
-    private Set<String> operators;
+    private Set<String> mNumbers;
+    private Set<String> mOperators;
 
     public CalculatorView(Context context) {
         super(context);
@@ -44,6 +44,8 @@ public class CalculatorView extends LinearLayout{
         inflate(getContext(), R.layout.calculator_view, this);
         mtxtResult = (TextView)findViewById(R.id.result);
         mtxtFomula = (TextView)findViewById(R.id.formula);
+        mtxtResult.setText( SharePreferenceObject.getInstance(getContext()).getDataResult());
+        mtxtFomula.setText( SharePreferenceObject.getInstance(getContext()).getDataFomula());
         initNumbers();
     }
 
@@ -90,9 +92,9 @@ public class CalculatorView extends LinearLayout{
      * 「１－９」という比較の値を保存する
      */
     private void initNumbers() {
-        numbers = new HashSet<String>();
+        mNumbers = new HashSet<String>();
         for (int i = 0; i < 10; i++) {
-            numbers.add(Integer.toString(i));
+            mNumbers.add(Integer.toString(i));
         }
     }
 
@@ -100,10 +102,10 @@ public class CalculatorView extends LinearLayout{
      * 算定値を保存する
      */
     private void initOperators() {
-        operators = new HashSet<String>();
+        mOperators = new HashSet<String>();
         String[] ops = { "+", "-", "*", "/","%","."};
         for (String operator : ops) {
-            operators.add(operator);
+            mOperators.add(operator);
         }
     }
 
@@ -115,10 +117,10 @@ public class CalculatorView extends LinearLayout{
      * @return true if value is numerical
      */
     private boolean isNumerical(String value) {
-        if (numbers == null) {
+        if (mNumbers == null) {
             initNumbers();
         }
-        return numbers.contains(value);
+        return mNumbers.contains(value);
     }
 
     /**
@@ -129,10 +131,10 @@ public class CalculatorView extends LinearLayout{
      * @return true if value is operator
      */
     private boolean isOperator(String value) {
-        if (operators == null) {
+        if (mOperators == null) {
             initOperators();
         }
-        return operators.contains(value);
+        return mOperators.contains(value);
     }
 
     /**

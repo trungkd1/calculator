@@ -1,18 +1,20 @@
 package galapagos.calculatorx1;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 
 public class MainActivity extends AppCompatActivity{
 
-    CalculatorView mCalculatorView;
+    private CalculatorView mCalculatorView;
+    public static int OVERLAY_PERMISSION_REQ_CODE = 1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mCalculatorView = (CalculatorView)findViewById(R.id.contain_layout);
+        checkPermission();
     }
 
     @Override
@@ -39,6 +42,10 @@ public class MainActivity extends AppCompatActivity{
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            SharePreferenceObject.getInstance(this).saveDataFomula(mCalculatorView.mtxtFomula.getText().toString());
+            SharePreferenceObject.getInstance(this).saveDataResult(mCalculatorView.mtxtResult.getText().toString());
+            startService(new Intent(MainActivity.this, ServiceFloating.class));
+            finish();
             return true;
         }
 
@@ -47,6 +54,16 @@ public class MainActivity extends AppCompatActivity{
 
     public void onClickButton(View view) {
         mCalculatorView.onClickButton(view);
+    }
+
+    public void checkPermission() {
+        if(Build.VERSION.SDK_INT >= 23) {
+            if (!Settings.canDrawOverlays(MainActivity.this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, OVERLAY_PERMISSION_REQ_CODE);
+            }
+        }
     }
 
 }
